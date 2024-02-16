@@ -20,7 +20,11 @@ func main() {
 		// By Placing go keyword we create a new Go Routine
 		go checkLink(link, channel)
 	}
-	fmt.Println(<-channel)
+
+	for i := 0; i < len(links); i++ {
+		fmt.Println(<-channel)
+	}
+
 }
 
 func checkLink(link string, channel chan string) {
@@ -31,4 +35,5 @@ func checkLink(link string, channel chan string) {
 		return
 	}
 	fmt.Printf("%v is up with statusCode %d\n", link, ip.StatusCode)
+	channel <- "It's up"
 }
