@@ -14,15 +14,20 @@ func main() {
 		"http://amazon.com",
 	}
 
+	channel := make(chan string)
+
 	for _, link := range links {
-		checkLink(link)
+		// By Placing go keyword we create a new Go Routine
+		go checkLink(link, channel)
 	}
+	fmt.Println(<-channel)
 }
 
-func checkLink(link string) {
-	ip, err := http.Get(link)
+func checkLink(link string, channel chan string) {
+	ip, err := http.Get(link) // This is Blocking Call!! So Main Go Routine is suspended
 	if err != nil {
 		fmt.Printf("Error occurred on link: %v", link)
+		channel <- "Error occurred on link: " + link
 		return
 	}
 	fmt.Printf("%v is up with statusCode %d\n", link, ip.StatusCode)
