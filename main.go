@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"time"
 )
 
 func main() {
@@ -21,14 +22,20 @@ func main() {
 		go checkLink(link, channel)
 	}
 
-	for {
+	for l := range links {
 		//fmt.Println(<-channel)
-		checkLink(<-channel, channel)
+		//time.Sleep(5 * time.Second)
+		//checkLink(l, channel)
+		go func() {
+			time.Sleep(5 * time.Second)
+			checkLink(links[l], channel)
+		}()
 	}
 
 }
 
 func checkLink(link string, channel chan string) {
+	time.Sleep(5 * time.Second)
 	ip, err := http.Get(link) // This is Blocking Call!! So Main Go Routine is suspended
 	if err != nil {
 		fmt.Printf("Error occurred on link: %v", link)
